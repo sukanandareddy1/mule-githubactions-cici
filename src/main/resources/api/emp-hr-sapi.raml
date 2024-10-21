@@ -1,0 +1,44 @@
+#%RAML 1.0
+title: emp-hr-sapi
+description: to add employee to HR system  
+version: 1.0
+baseUri: http://localhost:8087/emp-hr-sapi/v1
+securitySchemes:
+  oauth2-scheme: !include exchange_modules/68ef9520-24e9-4cf2-b2f5-620025690913/training-oauth20-security-scheme/1.0.2/OAuth2.raml
+uses:
+  requestDT: datatypes/requestdataType.raml
+  
+/create-employee:
+  post:
+    description: add employee to HR system
+          
+    body:
+      application/json:
+        type: requestDT.CreateEmployeeRequestType
+        example: !include/examples/create-employee-request.json
+          
+    responses:
+      201:
+        body:
+          application/json:
+            type: requestDT.CreateEmployeeRespond201
+            example: !include examples/success200-response.json
+             
+      400:
+        body:
+          application/json:
+            type: requestDT.CreateEmployeeResponseType400
+            example: !include examples/create-400response.json
+              
+      500:
+        body:
+          application/json:
+            type: requestDT.CreateEmployeeResponseType500
+            example: !include examples/create-example-500response.json
+              
+                          
+          
+                                      
+            
+          
+

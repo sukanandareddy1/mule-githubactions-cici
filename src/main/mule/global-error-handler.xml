@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<error-handler name="global-error-handlerError_Handler" doc:id="d048a9a4-779d-4059-a1fd-76df192f912c" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="42f1c69b-bd79-4398-868a-ee2cc1043260" type="APIKIT:BAD_REQUEST" >
+			<set-variable value="400" doc:name="set Http Status" doc:id="6e1e4368-2d24-495c-adca-4c3265b7cb43" variableName="httpStatus"/>
+			<set-variable value="Bad Request" doc:name="set error msg" doc:id="e6ee8339-275f-4a5d-adae-250b8a84e9aa" variableName="errorMessage"/>
+			<set-variable value="#[error.description]" doc:name="error description" doc:id="5faea36c-bc04-4b08-8688-ec580950356b" variableName="errorDescription"/>
+			<flow-ref doc:name="Flow Reference" doc:id="8eb85100-de6e-4c6a-b672-b68625052193" name="global-error-response-handlerSub_Flow"/>
+		</on-error-propagate>
+	</error-handler>
+	<sub-flow name="global-error-response-handlerSub_Flow" doc:id="232a22ac-537b-4731-a5e0-ac2f7c7c8e57" >
+		<ee:transform doc:name="Transform Message" doc:id="546cd1e9-9ab8-4757-ab52-6b9eb468ebe8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+'error']]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message" doc:id="8ae3d954-28ff-4790-95de-8c71ac0d813c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	code: vars.httpStatus,
+	message: vars.errorMessage,
+	description: vars.errorDescription
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="4f3b4d8a-31a3-47cd-a2c3-f597c80b587b" message="end flow:#[payload]"/>
+	</sub-flow>
+</mule>

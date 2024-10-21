@@ -1,0 +1,80 @@
+#%RAML 1.0 Library
+usage: emp hr sapi datatypes
+types:
+  CreateEmployeeRequestType:
+    description: create employee request payloadtypes
+    type: object
+    properties:
+      empId:
+        description: employeeid
+        type: integer
+        required: true
+        example: 123
+      empName:
+        description: employee name
+        type: string
+        required: false
+        example: suka
+      empAddress:
+        description: employeeid
+        type: string
+        required: true
+        example: "india"
+      empStatus:
+        description: employeeid
+        type: string
+        required: false
+        example: "A"   
+  CreateEmployeeRespond201:
+    description: empl 200 response
+    type: object
+    properties:
+      code:
+        description: 
+        type: integer
+        example: 123
+      message:
+        description: message
+        type: string
+        example: created
+      description:
+        type: string
+        example: created hr system   
+
+  CreateEmployeeResponseType400:
+    description: create employee response type
+    type: object
+    properties:
+      code:
+        description: 
+        type: integer
+        example: 123
+      message:
+        description: message
+        type: string
+        example: created
+      description:
+        description: description of resource
+        type: string
+        example: "emp created in hr system"
+  CreateEmployeeResponseType500:
+    type: object
+    properties:
+      code:
+        description: 
+        type: integer
+        example: 456
+      message:
+        description: message
+        type: string
+        example: created
+      description:
+        description: description of resource
+        type: string
+        example: "internal server error"
+          
+      
+
+          
+
+  

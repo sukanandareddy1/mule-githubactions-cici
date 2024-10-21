@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="fa2acdd3-b9f1-401a-9e44-69c3509dc9fc" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" database="suka" password="Syam@sd7"/>
+	</db:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="1fd19635-4f9b-40b0-8b7a-7c78e82d7c5b" file="test.properties" />
+	<flow name="post:\create-employee:application\json:emp-hr-sapi-config">
+        <logger level="INFO" doc:name="Logger" doc:id="70a174f7-f28d-4308-bfde-65c0049c13a6" message="transaction:#[vars.transactionId] -started  employee flow and payload:#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="99b9dcc5-d9c5-4f7f-8a29-9a4a4fc30842" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	emp_id: payload.empId,
+	emp_name: payload.empName,
+	emp_address: payload.empAddress
+	
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:insert doc:name="database" doc:id="fa40fd7e-a28c-433b-bf77-9392a45fbe9f" config-ref="Database_Config">
+			<db:sql ><![CDATA[insert into emp_master(emp_id,emp_name,emp_address)values(emp_id,:emp_name,:emp_address)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[payload]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="00ddaf8e-a972-4338-882c-dce9536cb1e5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="prepare response">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  code: 200,
+  message: "created",
+  description: "employee created Hr system"
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+	</mule>
